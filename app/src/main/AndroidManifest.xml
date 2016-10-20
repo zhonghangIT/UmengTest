@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.education.umengtest">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!--网络连接-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!--检测联网方式，区分用户设备使用的是2G、3G或是WiFi-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <!--获取用户设备的mac地址，在平板设备上，无法通过imei标示设备，我们会将mac地址作为用户的唯一标识-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!--获取用户设备的IMEI，通过IMEI和mac来唯一的标识用户。-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <!--添加自己的appkey,这个是友盟数据统计用的-->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="58085f05e0f55ad463001fa7"></meta-data>
+        <meta-data
+            android:name="UMENG_MESSAGE_SECRET"
+            android:value="3fd3486e4cf4a61e4ce09a5493caf246"></meta-data>
+        <!--添加渠道统计,这个value是自己设置 例如yingyongbao代表应用宝 360shangdian代表官方网站-->
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="yingyongbao" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
