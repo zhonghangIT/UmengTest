@@ -13,6 +13,10 @@ import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMusic;
+import com.umeng.socialize.shareboard.SnsPlatform;
+import com.umeng.socialize.utils.ShareBoardlistener;
 
 import java.util.Map;
 
@@ -27,67 +31,51 @@ public class MainActivity extends AppCompatActivity {
         mBtnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UMShareAPI  mShareAPI = UMShareAPI.get( MainActivity.this );
-                mShareAPI.doOauthVerify(MainActivity.this, SHARE_MEDIA.QQ, umAuthListener);
+                new ShareAction(MainActivity.this).setDisplayList(SHARE_MEDIA.SINA, SHARE_MEDIA.QQ, SHARE_MEDIA.WEIXIN)
+                        .setShareboardclickCallback(new ShareBoardlistener() {
+                            @Override
+                            public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
+                                shareToQQ();
+                            }
+                        }).open();
             }
         });
     }
 
+    private void shareToQQ() {
+        UMusic music = new UMusic("http://m2.music.126.net/kdmVoHkL1G-RbeXnsr1rnw==/6624557558012901.mp3");
+        music.setTitle("This is music title");//音乐的标题
+        music.setThumb("http://www.umeng.com/images/pic/social/chart_1.png");//音乐的缩略图
+        music.setDescription("my description");//音乐的描述
 
-    private UMAuthListener umAuthListener = new UMAuthListener() {
-        @Override
-        public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
-            //取出相应的信息,去我们自己的服务器注册
-            Toast.makeText(getApplicationContext(), "Authorize succeed", Toast.LENGTH_SHORT).show();
-
-        }
-
-        @Override
-        public void onError(SHARE_MEDIA platform, int action, Throwable t) {
-            Toast.makeText( getApplicationContext(), "Authorize fail", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onCancel(SHARE_MEDIA platform, int action) {
-            Toast.makeText( getApplicationContext(), "Authorize cancel", Toast.LENGTH_SHORT).show();
-        }
-    };
-    private void share() {
-        new ShareAction(MainActivity.this).setPlatform(SHARE_MEDIA.WEIXIN)
+        new ShareAction(MainActivity.this).setPlatform(SHARE_MEDIA.QQ)
                 .withText("hello")
-                .setCallback(umShareListener)
+                .withMedia(new UMImage(MainActivity.this, R.mipmap.ic_qm))
+                .withTitle("我的github")
+                .withMedia(music)
+                .withTargetUrl("https://github.com/zhonghangIT")
+                .setCallback(new UMShareListener() {
+                    @Override
+                    public void onResult(SHARE_MEDIA platform) {
+                        Log.d("plat", "platform" + platform);
+                        Toast.makeText(MainActivity.this, platform + " 分享成功啦", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(SHARE_MEDIA platform, Throwable t) {
+                        Toast.makeText(MainActivity.this, platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
+                        if (t != null) {
+                            Log.d("throw", "throw:" + t.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onCancel(SHARE_MEDIA platform) {
+                        Toast.makeText(MainActivity.this, platform + " 分享取消了", Toast.LENGTH_SHORT).show();
+                    }
+                })
                 .share();
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-    }
-
-
-    private UMShareListener umShareListener = new UMShareListener() {
-        @Override
-        public void onResult(SHARE_MEDIA platform) {
-            Log.d("plat", "platform" + platform);
-
-            Toast.makeText(MainActivity.this, platform + " 分享成功啦", Toast.LENGTH_SHORT).show();
-
-        }
-
-        @Override
-        public void onError(SHARE_MEDIA platform, Throwable t) {
-            Toast.makeText(MainActivity.this, platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
-            if (t != null) {
-                Log.d("throw", "throw:" + t.getMessage());
-            }
-        }
-
-        @Override
-        public void onCancel(SHARE_MEDIA platform) {
-            Toast.makeText(MainActivity.this, platform + " 分享取消了", Toast.LENGTH_SHORT).show();
-        }
-    };
 
 
 }
