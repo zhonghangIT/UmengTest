@@ -1,1 +1,1 @@
-include ':app', ':umengshare',':PushSDK'
+include ':app', ':umengshare', ':PushSDK', ':pushtest'
